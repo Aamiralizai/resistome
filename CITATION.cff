@@ -27,7 +27,7 @@ repository-code: "https://github.com/Aamiralizai/resistome"
 preferred-citation:
   type: article
   title: >-
-    Genomic conservation constrains prediction of the human gut resistome from
+    Genomic conservation shapes predictability of the human gut resistome from
     microbial community composition
   authors:
     - family-names: Khan

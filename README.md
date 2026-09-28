@@ -26,7 +26,20 @@ No data is included in this repository. The inputs are public:
 | Reference assemblies | NCBI RefSeq, via `datasets` | Retrieved with `src/s06e_independent_pangenome.sh` |
 
 Derived matrices, per-fold outputs and the pangenome evidence tables are
-deposited separately (see the manuscript's data availability statement).
+deposited on Zenodo at
+[10.5281/zenodo.23010784](https://doi.org/10.5281/zenodo.23010784):
+
+| Archive | Contents |
+|---|---|
+| `matrices.zip` | the standardised resistome and taxonomic matrices, and the sample table |
+| `model_outputs.zip` | per-fold cross-validation metrics and predictions, and the held-out evaluation |
+| `pangenome.zip` | the pangenome evidence tables, including the 166-species independent set |
+| `tables.zip` | every result table the pipeline writes, including those from `s22` |
+| `provenance.zip` | the freeze manifests recording which code produced which results |
+| `Zenodo_README.md` | what each archive holds and how it maps to the manuscript |
+
+Downloading `pangenome.zip` and `tables.zip` is enough to rerun
+`src/s22_supplementary_tables.py` without repeating the pipeline.
 
 ## Setup
 
@@ -84,6 +97,15 @@ python src/s13_mobility_predictability.py \
 
 # 4. Pangenome evidence, if rebuilding it from scratch (6-10 hours).
 bash src/s06e_independent_pangenome.sh
+
+# 5. Supplementary tables. Reads the tables written above; --xlsx also
+#    writes the sheets into the workbook. Needs s05 to have been run with
+#    the subject-grouped scheme, or it stops rather than report a partial
+#    validation ladder.
+python src/s22_supplementary_tables.py \
+    --tables /path/to/results/tables \
+    --pangenome /path/to/pangenome_evidence_independent.tsv \
+    --xlsx Supplementary_Tables.xlsx
 ```
 
 `src/s00_smoke_test.py` runs the whole chain on synthetic data in a few
@@ -104,6 +126,11 @@ minutes and is the fastest way to check an installation.
 | Negative results (pooling, temporal, mediation, exposure, distance) | `s05`, `s14`, `s15`, `s16`, `habitat/fold_heterogeneity.py` | see `docs/PIPELINE_NOTES.md` |
 | Sensitivity of the variance estimate | `run_sensitivity.sh`, `s20_robustness.py` | `sensitivity_taxonomy_adult.csv` |
 | Cross-habitat analyses | `habitat/run_habitats.sh` | `habitats/` |
+| Validation ladder, leakage vs cohort shift | `s22_supplementary_tables.py` | `validation_ladder.csv` |
+| Conservation under minimum-assembly thresholds and measurement error | `s22_supplementary_tables.py` | `conservation_min_assemblies.csv`, `conservation_errors_in_variables.csv` |
+| Conservation by drug class, leave-one-class-out | `s22_supplementary_tables.py` | `conservation_by_drug_class.csv`, `conservation_leave_one_class_out.csv` |
+| Alternative explanations: prevalence, abundance variance, host breadth | `s22_supplementary_tables.py` | `conservation_partial_associations.csv` |
+| ResFinder-to-AMRFinderPlus family mapping | `s22_supplementary_tables.py` | `family_mapping_65.csv` |
 
 ## Keeping results and code in step
 
@@ -123,39 +150,9 @@ python tools/verify_package.py --manifest frozen/v86_frozen.json \
 
 `verify_package.py` hashes both trees and, given a manuscript, checks that
 every number printed in it appears in a result table at the precision printed.
-
-## Reproducing the revision analyses (Supplementary Tables 27-30)
-
-Four tables answer the objections raised after the first analysis round. They
-are built by one script, from the deposited result tables and the pangenome
-evidence, so every number in the manuscript's revision paragraphs has shipped
-code behind it:
-
-```bash
-python tools/make_revision_tables.py \
-    --tables /path/to/results/tables \
-    --pangenome /path/to/pangenome_evidence_independent.tsv \
-    --xlsx Supplementary_Tables.xlsx
-```
-
-| Table | Contents |
-|-------|----------|
-| S27 | validation ladder, with the random-to-LOSO drop split between unseen individuals and unseen cohorts |
-| S28 | minimum-assembly thresholds, and the errors-in-variables interval for conservation |
-| S29 | conservation and predictability by drug class, within-class ranks, leave-one-class-out |
-| S30 | ResFinder-to-AMRFinderPlus family mapping with the genome support behind each conservation value |
-
-S27 is read from `tables/model_summary.csv` and requires the `subject_grouped`
-scheme, so `s05_models.py` must have been rerun since that scheme was added. If
-the scheme is missing the script stops instead of reporting a two-rung ladder;
-`--skip-ladder` builds S28-S30 alone. The errors-in-variables block is a
-seeded parametric bootstrap (default seed 42, 2,000 replicates) and the
-manuscript quotes the defaults. S30 refuses to write unless its recomputed
-conservation matches the deposited table for every family.
-
-`verify_package.py` will report one remaining unmatched number, `0.999`. That is
-the collinearity threshold above which predictors are dropped as redundant, a
-method parameter rather than a result, and it correctly appears in no table.
+It reports one unmatched number, `0.999`: that is the collinearity threshold
+above which predictors are dropped as redundant, a method parameter rather
+than a result, and it correctly appears in no table.
 
 ## Ambiguous run-to-sample mappings
 
@@ -173,15 +170,16 @@ python tools/patch_ambiguous_runs.py --revert   # restore the original rule
 
 The excluded runs are written to `work/ambiguous_runs.tsv`.
 
-## Changes since the version used for the first analysis round
+## Design decisions that affect reported numbers
 
-Three changes were made after the initial results and before the final run.
-They are listed here because they affect reported numbers:
+Three choices in the evaluation and permutation design are easy to get wrong
+and change the numbers a rerun produces. They are recorded here so that a
+rerun can be compared against the published values:
 
-1. **Independent permutation streams** (`s04`). Permutation tests previously
-   drew from one module-level generator consumed in block order, so a P value
-   could shift when an unrelated block changed. Each test now derives its own
-   stream from the configured seed. R² values are unaffected; mid-range P
+1. **Independent permutation streams** (`s04`). Each permutation test derives
+   its own stream from the configured seed rather than drawing from one
+   module-level generator consumed in block order, so a P value does not shift
+   when an unrelated block changes. R² values are unaffected; mid-range P
    values move by roughly their Monte Carlo error.
 2. **Subject-grouped cross-validation** (`s05`). A third scheme assigns whole
    subjects to folds. Without it, the random-to-leave-one-study-out gap
@@ -198,7 +196,7 @@ reported alongside it.
 ## Repository layout
 
 ```
-src/            pipeline stages s00-s21
+src/            pipeline stages s00-s22
 habitat/        cross-habitat analyses
 tools/          freeze, verification and sensitivity utilities
 docs/           detailed stage-by-stage notes

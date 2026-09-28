@@ -85,12 +85,20 @@ fi
 log "16/17 within-subject exposure boundary"
 python src/s16_exposure_boundary.py
 
-log "17/17 robustness, sensitivity and tested nulls"
+log "17/18 robustness, sensitivity and tested nulls"
 if [[ -n "${PANGENOME:-}" ]]; then
   python src/s20_robustness.py --pangenome "$PANGENOME" \
       ${HABITAT_OUT:+--habitats "$HABITAT_OUT"}
 else
   python src/s20_robustness.py ${HABITAT_OUT:+--habitats "$HABITAT_OUT"}
+fi
+
+log "18/18 supplementary tables"
+if [[ -n "${PANGENOME:-}" ]]; then
+  TABLE_DIR=$(python -c "import sys;sys.path.insert(0,'src');from common import load_config;print(load_config()['paths']['table_dir'])")
+  python src/s22_supplementary_tables.py --tables "$TABLE_DIR" --pangenome "$PANGENOME"
+else
+  echo "PANGENOME not set - skipping stage 18"
 fi
 
 log "done"
