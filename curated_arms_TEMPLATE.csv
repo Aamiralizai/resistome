@@ -1,0 +1,7 @@
+study,subject_id,arm,intervention,comparator,baseline_sample,post_sample,exposure_confirmed,reference
+# One row per subject. arm must be exactly "treated" or "control".
+# subject_id must match the namespaced form used by the pipeline:
+#   <study>::<original subject id>
+# Delete these comment lines before use.
+Damman_2015_FMT_UC,Damman_2015_FMT_UC::EXAMPLE01,treated,FMT,placebo,,,yes,PMID:XXXXXXX
+Damman_2015_FMT_UC,Damman_2015_FMT_UC::EXAMPLE02,control,none,placebo,,,yes,PMID:XXXXXXX

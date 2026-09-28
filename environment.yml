@@ -1,0 +1,44 @@
+# Pinned environment for the W1 resistome pipeline.
+#
+#   conda env create -f environment.yml
+#   conda activate w1-resistome
+#
+# PyTorch is installed separately from the cu128 index: the conda and default
+# PyPI builds do not carry sm_120 kernels and fail at the first CUDA launch on
+# Blackwell hardware (RTX 50-series).
+#
+#   pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128
+#   python -c "import torch; print(torch.cuda.get_device_capability())"   # (12, 0)
+#
+# Bioinformatics tools are needed only for the pangenome validation (stages
+# 6b-6d) and can be omitted if that analysis is not being reproduced.
+
+name: w1-resistome
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.13
+  - numpy=2.4.6
+  - pandas=3.0.5
+  - pyarrow=25.0.0
+  - pytables=3.11.1
+  - scipy=1.18.0
+  - scikit-learn=1.9.0
+  - statsmodels=0.14.6
+  - matplotlib=3.10.8
+  - seaborn=0.13.2
+  - pyyaml=6.0.3
+  - tqdm=4.66.5
+  - py-xgboost-gpu=2.1.4
+  - lightgbm=4.7.0
+  - umap-learn=0.5.12
+  # pangenome validation only
+  - ncbi-datasets-cli
+  - ncbi-amrfinderplus=4.2.7
+  # fonts for the figure style
+  - fonts-conda-ecosystem
+  - pip
+  - pip:
+      # torch is deliberately absent here - see the header
+      - openpyxl==3.1.5

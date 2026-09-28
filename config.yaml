@@ -1,0 +1,96 @@
+paths:
+  zenodo_dir: /mnt/x/w1_resistome/zenodo
+  arg_h5: /mnt/x/w1_resistome/zenodo/ARG.h5
+  rrna_h5: /mnt/x/w1_resistome/zenodo/rRNA.h5
+  metadata_h5: /mnt/x/w1_resistome/zenodo/metadata.h5
+  diversity_h5: /mnt/x/w1_resistome/zenodo/diversity.h5
+  resfinder_anno: /mnt/x/w1_resistome/zenodo/ResFinder_anno.h5
+  metalog_dir: /mnt/x/w1_resistome/Metalog
+  metalog_meta: /mnt/x/w1_resistome/Metalog/human_extended_wide_2026-07-07.tsv.gz
+  metalog_mapping: /mnt/x/w1_resistome/Metalog/sequencing_db_mapping_2026-07-07.tsv.gz
+  metalog_mpa4: /mnt/x/w1_resistome/Metalog/human_metaphlan4_species_2026-07-07.tsv.gz
+  metalog_lineage: /mnt/x/w1_resistome/Metalog/mpa4_clade_lineages.tsv.gz
+  metalog_reads: /mnt/x/w1_resistome/Metalog/human_read_counts_2026-07-07.tsv.gz
+  metalog_entero: /mnt/x/w1_resistome/Metalog/human_enterotypes_2026-07-07.tsv.gz
+  metalog_load: /mnt/x/w1_resistome/Metalog/human_mlp_2026-07-07.tsv.gz
+  work_dir: /mnt/x/w1_resistome/work
+  fig_dir: /mnt/x/w1_resistome/figures
+  table_dir: /mnt/x/w1_resistome/tables
+columns:
+  arg:
+    run: run_accession
+    gene: refSequence
+    count: fragmentCountAln
+  rrna:
+    run: run_accession
+    count: fragmentCountAln
+    taxon: genus_name
+  zmeta:
+    run: run_accession
+    sample: sample_accession
+    project: project_accession
+    date: collection_date
+    country: country
+    host: host
+  metalog_meta:
+    sample: sample_alias
+    study: study_code
+    country: geographic_location
+    age: age_years
+    sex: sex
+    disease: subject_disease_status
+    bodysite: environment_material
+  mapping:
+    metalog_sample: sample_alias
+    ena_run: external_id
+    ena_sample: external_id
+filters:
+  max_upload_year: null
+  bodysite_keywords:
+  - stool
+  - feces
+  - faeces
+  - fecal
+  - faecal
+  - gut
+  - intestin
+  min_reads_after_qc: 1000000
+  arg_min_prevalence: 0.05
+  taxa_min_prevalence: 0.05
+  taxa_min_abundance: 0.0001
+  min_samples_per_study: 20
+  min_bacterial_fragments: 100
+  arg_min_prevalence_secondary: 0.01
+normalisation:
+  arg_pseudocount: 0.001
+  taxa_pseudocount_frac: 0.5
+model:
+  seed: 42
+  cv_scheme: leave_one_study_out
+  n_epochs: 200
+  batch_size: 256
+  lr: 0.001
+  weight_decay: 1.0e-05
+  hidden:
+  - 512
+  - 256
+  dropout: 0.3
+  patience: 20
+  device: cuda
+  xgb_multi_output: false
+  xgb_trees: 250
+figures:
+  dpi: 600
+  formats:
+  - png
+  - pdf
+  - svg
+  font: Times New Roman
+  panel_label_size: 13
+analysis:
+  stratum: adult
+  holdout_studies: 8
+  n_permutations: 999
+high_risk:
+  min_breadth: 0.8
+  min_fragments: 2

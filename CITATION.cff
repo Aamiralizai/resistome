@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the manuscript below."
+title: "Resistome conservation pipeline"
+abstract: >-
+  Analysis pipeline relating within-species genomic conservation to the
+  cross-cohort predictability of the human gut resistome from microbial
+  community composition.
+authors:
+  - family-names: Khan
+    given-names: Ishrat
+  - family-names: Fahira
+    given-names: Aamir
+  - family-names: Jan
+    given-names: Syed Mansoor
+  - family-names: Shahab
+    given-names: Muhammad
+  - family-names: Ud Din
+    given-names: Zaheer
+  - family-names: Wadood
+    given-names: Abdul
+  - family-names: Li
+    given-names: Xiaoan
+  - family-names: Jian
+    given-names: Xuemin
+license: MIT
+repository-code: "https://github.com/Aamiralizai/resistome"
+preferred-citation:
+  type: article
+  title: >-
+    Genomic conservation constrains prediction of the human gut resistome from
+    microbial community composition
+  authors:
+    - family-names: Khan
+      given-names: Ishrat
+    - family-names: Fahira
+      given-names: Aamir
+    - family-names: Jan
+      given-names: Syed Mansoor
+    - family-names: Shahab
+      given-names: Muhammad
+    - family-names: Ud Din
+      given-names: Zaheer
+    - family-names: Wadood
+      given-names: Abdul
+    - family-names: Li
+      given-names: Xiaoan
+    - family-names: Jian
+      given-names: Xuemin
+  year: 2026
+  notes: Manuscript under review; update with journal, volume and DOI on acceptance.
