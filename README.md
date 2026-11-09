@@ -31,20 +31,6 @@ fastest way to confirm an installation before committing a day of compute.
 
 ## Requirements
 
-PyTorch is installed separately because neither the conda nor the default PyPI
-build carries sm_120 kernels; on Blackwell hardware (RTX 50-series) they
-install cleanly and then fail at the first CUDA launch.
-
-The published results were produced with **xgboost 3.4.0**, scikit-learn 1.9.0
-and torch 2.11.0+cu128. `environment.yml` pins `py-xgboost-gpu=2.1.4`, an older
-major version that may not reproduce the gradient-boosting numbers exactly;
-install xgboost 3.4.0 to match the published run.
-
-Several scripts carry default paths under `/mnt/x/w1_resistome/`, the layout of
-the machine the analysis ran on. All are overridable by argument or environment
-variable, and are left unedited so this code is byte-identical to the code that
-produced the published results. `config.local.yaml` takes precedence over
-`config.yaml` when present.
 
 ## Input data
 
